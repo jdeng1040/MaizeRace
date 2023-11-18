@@ -1,6 +1,13 @@
 import json
 
 PACKET_SIZE = 1500
+# Client types sent
+ENTER = "ENTER"
+
+# Server types sent
+BEGIN = "BEGIN"
+PLAYERS = "PLAYERS"
+
 
 def toJSON(dictionary):
     s = json.dumps(dictionary)

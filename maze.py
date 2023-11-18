@@ -23,8 +23,6 @@ def generate_maze(width, height):
 
     # Set the start and end points
     end_x, end_y = width - 1, random.randint(0, height - 1)
-    maze[start_y][start_x] = 'S'
-    maze[end_y][end_x] = 'E'
 
     return maze, (start_x, start_y), (end_x, end_y)
 
@@ -68,6 +66,23 @@ def solve_maze(maze, start, end):
             return None
 
     return dfs(start[1], start[0], [start])
+
+
+SEPARATOR = "|"
+
+
+def serialize_maze(maze):
+    print(maze)
+    output = []
+    for row in maze:
+        output.append("".join(row))
+    return SEPARATOR.join(output)
+
+
+def deserialize_maze(maze_string):
+    parts = maze_string.split(SEPARATOR)
+    output = [list(s) for s in parts]
+    return output
 
 
 if __name__ == "__main__":

@@ -4,15 +4,27 @@ from _thread import *
 import sys
 import json
 import helper
+import maze
+
+
+if len(sys.argv) != 2:
+    print("need to give server ip")
+    print(sys.argv)
+    sys.exit(1)
+
 
 # Constants
-server = "35.3.210.91"
+server = sys.argv[1]
 port = 5555
 
 class AllState:
     def __init__(self):
         # format: { name: (xPos, yPos)}
         self.locations = {}
+        self.maze_width = 25
+        self.maze_height = 25
+        self.maze, self.start, self.end = maze.generate_maze(self.maze_width, self.maze_height)
+
 
 # Create a socket to listen on
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -23,7 +35,7 @@ except socket.error as e:
     sys.exit(1)
 
 # Only accept 2 connections
-num_clients = 2
+num_clients = 1
 s.listen(num_clients)
 print("Waiting for connections...Server Started")
 
@@ -55,29 +67,26 @@ while True:
         else:
             data = json.loads(data)
             print("data received", data)
-            
-            if data["type"] == "ENTER":
+
+            if data["type"] == helper.ENTER:
                 game_state.locations[data["name"]] = (0, 0)
                 if len(game_state.locations) == num_clients:
                     # everyone entered the game, we can return the maze board
+                    serialized_maze = maze.serialize_maze(game_state.maze)
                     d = helper.toJSON({
-                        "type": "BEGIN",
-                        "width": 10,
-                        "height": 10,
-                        "maze": "maze"
+                        "type": helper.BEGIN,
+                        "start": game_state.start,
+                        "end": game_state.end,
+                        "maze": serialized_maze
                     })
-                    sock.sendAll(d)
+                    sock.sendall(d)
                 else:
                     d = helper.toJSON({
-                        "type": "PLAYERS",
+                        "type": helper.PLAYERS,
                         "players": list(game_state.locations.keys())
                     })
                     sock.sendall(d)
+
             else:
                 print("unhandled TYPE")
                 sys.exit(1)
-            
-
-
-            
-            
