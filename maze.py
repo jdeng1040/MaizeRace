@@ -68,6 +68,23 @@ def solve_maze(maze, start, end):
     return dfs(start[1], start[0], [start])
 
 
+SEPARATOR = "|"
+
+
+def serialize_maze(maze):
+    print(maze)
+    output = []
+    for row in maze:
+        output.append("".join(row))
+    return SEPARATOR.join(output)
+
+
+def deserialize_maze(maze_string):
+    parts = maze_string.split(SEPARATOR)
+    output = [list(s) for s in parts]
+    return output
+
+
 if __name__ == "__main__":
     width = 10
     height = 10

@@ -17,8 +17,6 @@ black = (0, 0, 0)
 font = pygame.font.Font(None, 36)
 
 # Define input fields and button
-# input1_rect = pygame.Rect(width // 4, height // 4, width // 2, 40)
-# input2_rect = pygame.Rect(width // 4, height // 2 + 40, width // 2, 40)
 label1_rect = pygame.Rect(width // 4, height // 8 + 40, width // 2, 40)
 input_rect1 = pygame.Rect(width // 4, height // 4, width // 2, 40)
 label2_rect = pygame.Rect(width // 4, height // 2 - 50, width // 2, 40)
@@ -28,6 +26,13 @@ button_rect = pygame.Rect(width // 4, height * 3 // 4, width // 2, 40)
 # Input field values
 name = ""
 ip = ""
+
+# Define list of players
+player_list = [
+    "William",
+    "Oliver",
+    "Jason",
+]
 
 # Page identifiers
 PAGE_MAIN = "main"
@@ -85,12 +90,17 @@ while running:
         screen.blit(button_text, button_rect_center)
 
     elif current_page == PAGE_RESULT:
-        text_surface1 = font.render(name, True, black)
-        screen.blit(text_surface1, (width // 2 - text_surface1.get_width() // 2, height // 4))
+        title_surface = font.render("Waiting for players...", True, black)
+        screen.blit(title_surface, (width // 2 - title_surface.get_width() // 2, height // 8))
+        for i, item in enumerate(player_list):
+            text_surface = font.render(str(i + 1) + ". " + item, True, black)
+            screen.blit(text_surface, (width // 2 - text_surface.get_width() // 2, height // 4 + i * 40))
+        # text_surface1 = font.render(name, True, black)
+        # screen.blit(text_surface1, (width // 2 - text_surface1.get_width() // 2, height // 4))
 
-        # Render and blit the second phrase
-        text_surface2 = font.render(ip, True, black)
-        screen.blit(text_surface2, (width // 2 - text_surface2.get_width() // 2, height // 2))
+        # # Render and blit the second phrase
+        # text_surface2 = font.render(ip, True, black)
+        # screen.blit(text_surface2, (width // 2 - text_surface2.get_width() // 2, height // 2))
 
     pygame.display.flip()
 
