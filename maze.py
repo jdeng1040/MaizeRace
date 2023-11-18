@@ -23,8 +23,6 @@ def generate_maze(width, height):
 
     # Set the start and end points
     end_x, end_y = width - 1, random.randint(0, height - 1)
-    maze[start_y][start_x] = 'S'
-    maze[end_y][end_x] = 'E'
 
     return maze, (start_x, start_y), (end_x, end_y)
 
