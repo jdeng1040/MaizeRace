@@ -30,7 +30,7 @@ class Client:
 
         if recv_data["type"] == "PLAYERS":
             # do nothing
-            pass
+            return recv_data
         elif recv_data["type"] == "BEGIN":
             recv_data["maze"] = maze.deserialize_maze(recv_data["maze"])
         else:
@@ -51,4 +51,4 @@ if len(sys.argv) != 3:
     sys.exit(1)
 
 c = Client(sys.argv[1], sys.argv[2])
-c.sendConnect()
+print(c.sendConnect())
