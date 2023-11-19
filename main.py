@@ -272,15 +272,19 @@ class Quiz:
 
     # Define the question
     # Generate a random integer between 1 and 10 (inclusive)
-    first_num = random.randint(0, 12)
-    second_num = random.randint(0, 12)
-    question = str(first_num) + " * " + str(second_num)
+    # first_num = random.randint(0, 12)
+    # second_num = random.randint(0, 12)
+    # question = str(first_num) + " * " + str(second_num)
+
+    input_rect = pygame.Rect(width // 4, height // 2, width // 2, 40)
 
     def __init__(self):
         self.font_title = pygame.font.Font(None, 48)
         self.font_input = pygame.font.Font(None, 36)
         self.current_page = Quiz.PAGE_MAIN
-        self.input_rect = pygame.Rect(width // 4, height // 2, width // 2, 40)
+        self.first_num = random.randint(0, 12)
+        self.second_num = random.randint(0, 12)
+        self.question = str(self.first_num) + " * " + str(self.second_num)
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -332,7 +336,7 @@ class Quiz:
             self.button_rect_center = (self.button_rect_center[0] - button_surface.get_width() // 2, self.button_rect_center[1] - button_surface.get_height() // 2)
             screen.blit(button_surface, self.button_rect_center)
         elif self.current_page == self.PAGE_FAIL:
-            for i in range(5, 0, -1):
+            for i in range(3, 0, -1):
                 screen.fill(white)
                 text = self.font_input.render(str(i), True, black)
                 text_rect = text.get_rect(center=(width, height // 2))
