@@ -1,8 +1,6 @@
 import random
 from collections import deque
 
-random.seed(100)
-
 def _generate_maze(width, height):
     # Initialize the maze with walls
     maze = [['#' for _ in range(width)] for _ in range(height)]

@@ -270,12 +270,6 @@ class Quiz:
     button_color = pygame.Color('green')
     button_text = 'Enter'
 
-    # Define the question
-    # Generate a random integer between 1 and 10 (inclusive)
-    # first_num = random.randint(0, 12)
-    # second_num = random.randint(0, 12)
-    # question = str(first_num) + " * " + str(second_num)
-
     input_rect = pygame.Rect(width // 4, height // 2, width // 2, 40)
 
     def __init__(self):
