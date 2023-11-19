@@ -28,7 +28,7 @@ class AllState:
         self.maze[self.start[0]][self.start[1]] = '.'
         self.barrier_positions = []
         self.colors = {}
-        for i in range(9, len(self.solution), 30):
+        for i in range(30, len(self.solution), 30):
             self.barrier_positions.append(self.solution[i])
         print("barriers:", self.barrier_positions)
 

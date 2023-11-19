@@ -329,8 +329,8 @@ class Quiz:
         self.font_title = pygame.font.Font(None, 48)
         self.font_input = pygame.font.Font(None, 36)
         self.current_page = Quiz.PAGE_MAIN
-        self.first_num = random.randint(0, 12)
-        self.second_num = random.randint(0, self.first_num)
+        self.first_num = random.randint(1, 12)
+        self.second_num = random.randint(1, self.first_num)
         self.operator = random.choice([" + ", " - ", " * "])
         self.question = str(self.first_num) + self.operator + str(self.second_num) + " = ?"
 
