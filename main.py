@@ -341,7 +341,11 @@ class Quiz:
                 #     self.input_active = not self.input_active
                 #     self.input_color = self.input_color_active if self.input_active else self.input_color_inactive
                 if self.button_rect.collidepoint(event.pos) and self.input_text and self.input_text.isdigit():
-                    if int(self.input_text) == self.first_num * self.second_num:
+                    if self.operator == " * " and int(self.input_text) == self.first_num * self.second_num:
+                            return True
+                    elif self.operator == " + " and int(self.input_text) == self.first_num + self.second_num:
+                        return True
+                    elif self.operator == " - " and int(self.input_text) == self.first_num - self.second_num:
                         return True
                     else:
                         self.current_page = self.PAGE_FAIL
