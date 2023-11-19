@@ -31,7 +31,7 @@ font = pygame.font.Font(None, 36)
 players = []
 
 client = None
-name = "william"
+name = ""
 
 class Menu:
     # Page identifiers
