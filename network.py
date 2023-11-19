@@ -6,13 +6,14 @@ import maze
 
 
 class Client:
-    def __init__(self, ip, name):
+    def __init__(self, ip, name, color):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server = ip
         self.port = 5555
         self.addr = (self.server, self.port)
         self.name = name
         self.client.connect(self.addr)
+        self.color = color
 
     def sendConnect(self):
         """
@@ -20,7 +21,8 @@ class Client:
         """
         data = helper.toJSON({
             "type": helper.ENTER,
-            "name": self.name
+            "name": self.name,
+            "color": self.color,
         })
         print("sending: ", data)
         self.client.sendall(data)

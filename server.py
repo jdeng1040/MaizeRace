@@ -61,7 +61,7 @@ while True:
             connections.append(client)
             continue
 
-        data = str(sock.recv(1500, socket.MSG_WAITALL).decode())
+        data = str(sock.recv(1500).decode())
         if not data:
             connections.remove(sock)
             sock.close()
@@ -95,7 +95,8 @@ while True:
                 game_state.locations[name] = position
                 d = helper.toJSON({
                     "type": helper.ALL_POSITIONS,
-                    "locations": game_state.locations
+                    "locations": game_state.locations,
+                    "color": 
                 })
                 sock.sendall(d)
             else:

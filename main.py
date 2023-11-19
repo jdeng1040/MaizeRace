@@ -12,6 +12,10 @@ white = (255, 255, 255)
 black = (0, 0, 0)
 red = (255, 0, 0)
 gray = (211, 211, 211)
+blue = (0, 0, 255)
+green = (0, 255, 0)
+orange = (255, 165, 0)
+
 font = pygame.font.Font(None, 36)
 
 players = []
@@ -25,16 +29,30 @@ class Menu:
     PAGE_RESULT = "result"
 
     def __init__(self):
-        self.label1_rect = pygame.Rect(width // 4, height // 8 + 40, width // 2, 40)
-        self.input_rect1 = pygame.Rect(width // 4, height // 4, width // 2, 40)
-        self.label2_rect = pygame.Rect(width // 4, height // 2 - 50, width // 2, 40)
-        self.input_rect2 = pygame.Rect(width // 4, height // 2 - 10, width // 2, 40)
-        self.button_rect = pygame.Rect(width // 4, height * 3 // 4, width // 2, 40)
+        color_option_width = 200
+        color_option_spacing = 10
 
-        self.ip = "127.0.0.1"
+        # Calculate the total width of the color options row
+        total_color_options_width = (
+            4 * color_option_width + 3 * color_option_spacing
+        )
+        start_x = (width - total_color_options_width) // 2
+
+        self.label1_rect = pygame.Rect(width // 4, height // 8, width // 2, 40)
+        self.input_rect1 = pygame.Rect(width // 4, height // 4 - 40, width // 2, 40)
+        self.label2_rect = pygame.Rect(width // 4, height // 2 - 120, width // 2, 40)
+        self.input_rect2 = pygame.Rect(width // 4, height // 2 - 90, width // 2, 40)
+        self.color1 = pygame.Rect(start_x, height // 2 + 50, color_option_width, 40)
+        self.color2 = pygame.Rect(start_x + color_option_width + color_option_spacing, height // 2 + 50, color_option_width, 40)
+        self.color3 = pygame.Rect(start_x + 2 * (color_option_width + color_option_spacing), height // 2 + 50, color_option_width, 40)
+        self.color4 = pygame.Rect(start_x + 3 * (color_option_width + color_option_spacing), height // 2 + 50, color_option_width, 40)
+        self.button_rect = pygame.Rect(width // 4, height * 3 // 4, width // 2, 40)
+        self.ip = ""
+        self.selected_option = "RED"
         self.current_page = Menu.PAGE_MAIN
-    
+
     def handleEvent(self):
+       
         global name
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -52,13 +70,19 @@ class Menu:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1 and self.button_rect.collidepoint(pygame.mouse.get_pos()):
                     print(f"Transitioning to another page with inputs: {name}, {self.ip}")
-
                     # Button clicked, transition to another page
                     if self.current_page == Menu.PAGE_MAIN:
                         global client
-                        client = network.Client(self.ip, name)
+                        client = network.Client(self.ip, name, self.selected_option)
                         self.current_page = Menu.PAGE_RESULT
-    
+                elif self.color1.collidepoint(pygame.mouse.get_pos()):
+                    self.selected_option = "RED"
+                elif self.color2.collidepoint(pygame.mouse.get_pos()):
+                    self.selected_option = "BLUE"
+                elif self.color3.collidepoint(pygame.mouse.get_pos()):
+                    self.selected_option = "GREEN"
+                elif self.color4.collidepoint(pygame.mouse.get_pos()):
+                    self.selected_option = "ORANGE"
     def draw(self, screen):
         global name
         screen.fill(white)
@@ -76,6 +100,37 @@ class Menu:
             pygame.draw.rect(screen, black, self.input_rect2, 2)
             text_surface = font.render(self.ip, True, black)
             screen.blit(text_surface, (self.input_rect2.x + 5, self.input_rect2.y + 5))
+
+            text_surface = font.render("Choose your color", True, black)
+            screen.blit(text_surface, (width // 4 + 80, height // 2))
+
+            if self.selected_option == "RED":
+                text_surface = font.render("RED", True, red)
+            else: 
+                text_surface = font.render("RED", True, black)
+            text_rect = text_surface.get_rect(center=(self.color1.x + self.color1.width // 2, self.color1.y + self.color1.height // 2))
+            screen.blit(text_surface, text_rect.topleft)
+
+            if self.selected_option == "BLUE":
+                text_surface = font.render("BLUE", True, blue)
+            else :
+                text_surface = font.render("BLUE", True, black)
+            text_rect = text_surface.get_rect(center=(self.color2.x + self.color2.width // 2, self.color2.y + self.color2.height // 2))
+            screen.blit(text_surface, text_rect.topleft)
+
+            if self.selected_option == "GREEN":
+                text_surface = font.render("GREEN", True, green)
+            else:
+                text_surface = font.render("GREEN", True, black)
+            text_rect = text_surface.get_rect(center=(self.color3.x + self.color3.width // 2, self.color3.y + self.color3.height // 2))
+            screen.blit(text_surface, text_rect.topleft)
+
+            if self.selected_option == "ORANGE":
+                text_surface = font.render("ORANGE", True, orange)
+            else:
+                text_surface = font.render("ORANGE", True, black)
+            text_rect = text_surface.get_rect(center=(self.color4.x + self.color4.width // 2, self.color4.y + self.color4.height // 2))
+            screen.blit(text_surface, text_rect.topleft)
 
             pygame.draw.rect(screen, black, self.button_rect, 2)
             button_text = font.render("JOIN GAME", True, black)
