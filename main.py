@@ -60,7 +60,7 @@ bigfont = pygame.font.Font(None, 46)
 players = []
 
 client = None
-name = ""
+name = "Jason"
 
 class Menu:
     # Page identifiers
@@ -86,7 +86,7 @@ class Menu:
         self.color3 = pygame.Rect(start_x + 2 * (color_option_width + color_option_spacing), height // 2 + 50, color_option_width, 40)
         self.color4 = pygame.Rect(start_x + 3 * (color_option_width + color_option_spacing), height // 2 + 50, color_option_width, 40)
         self.button_rect = pygame.Rect(width // 4, height * 3 // 4, width // 2, 40)
-        self.ip = ""
+        self.ip = "127.0.0.1"
         self.selected_option = "RED"
         self.current_page = Menu.PAGE_MAIN
 
@@ -311,13 +311,16 @@ class Quiz:
 
     input_rect = pygame.Rect(width // 4, height // 2, width // 2, 40)
 
+    operator = ""
+
     def __init__(self):
         self.font_title = pygame.font.Font(None, 48)
         self.font_input = pygame.font.Font(None, 36)
         self.current_page = Quiz.PAGE_MAIN
         self.first_num = random.randint(0, 12)
-        self.second_num = random.randint(0, 12)
-        self.question = str(self.first_num) + " * " + str(self.second_num) + " = ?"
+        self.second_num = random.randint(self.first_num, 12)
+        self.operator = random.choice([" + ", " - ", " * "])
+        self.question = str(self.first_num) + self.operator + str(self.second_num) + " = ?"
 
     def handleEvent(self):
         for event in pygame.event.get():
@@ -334,7 +337,11 @@ class Quiz:
             elif event.type == pygame.KEYDOWN:
                 if self.input_active:
                     if event.key == pygame.K_RETURN and self.input_text and self.input_text.isdigit():
-                        if int(self.input_text) == self.first_num * self.second_num:
+                        if self.operator == " * " and int(self.input_text) == self.first_num * self.second_num:
+                            return True
+                        elif self.operator == " + " and int(self.input_text) == self.first_num + self.second_num:
+                            return True
+                        elif self.operator == " - " and int(self.input_text) == self.first_num - self.second_num:
                             return True
                         else:
                             self.current_page = self.PAGE_FAIL
