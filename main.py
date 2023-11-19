@@ -16,7 +16,7 @@ font = pygame.font.Font(None, 36)
 players = []
 
 client = None
-name = "oliver"
+name = ""
 
 class Menu:
     # Page identifiers
@@ -30,7 +30,7 @@ class Menu:
         self.input_rect2 = pygame.Rect(width // 4, height // 2 - 10, width // 2, 40)
         self.button_rect = pygame.Rect(width // 4, height * 3 // 4, width // 2, 40)
 
-        self.ip = "127.0.0.1"
+        self.ip = ""
         self.current_page = Menu.PAGE_MAIN
     
     def handleEvent(self):
