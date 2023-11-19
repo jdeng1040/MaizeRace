@@ -102,7 +102,7 @@ class Playing:
             for col in range(len(maze[0])):
                 self.maze[row+1][col+1] = maze[row][col]
         
-        self.player_size = 40
+        self.player_size = 20
         self.player_speed = 1
     
     def handleEvent(self):
@@ -111,13 +111,13 @@ class Playing:
         """
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP and self.player_pos[1] > 0 and maze[self.player_pos[1] - 1][self.player_pos[0]] == ".":
+                if event.key == pygame.K_UP and self.player_pos[1] > 0 and self.maze[self.player_pos[1] - 1][self.player_pos[0]] == ".":
                     self.player_pos[1] -= 1
-                elif event.key == pygame.K_DOWN and self.player_pos[1] < len(maze) - 1 and maze[self.player_pos[1] + 1][self.player_pos[0]] == ".":
+                elif event.key == pygame.K_DOWN and self.player_pos[1] < len(self.maze) - 1 and self.maze[self.player_pos[1] + 1][self.player_pos[0]] == ".":
                     self.player_pos[1] += 1
-                elif event.key == pygame.K_LEFT and self.player_pos[0] > 0 and maze[self.player_pos[1]][self.player_pos[0] - 1] == ".":
+                elif event.key == pygame.K_LEFT and self.player_pos[0] > 0 and self.maze[self.player_pos[1]][self.player_pos[0] - 1] == ".":
                     self.player_pos[0] -= 1
-                elif event.key == pygame.K_RIGHT and self.player_pos[0] < len(maze[0]) - 1 and maze[self.player_pos[1]][self.player_pos[0] + 1] == ".":
+                elif event.key == pygame.K_RIGHT and self.player_pos[0] < len(self.maze[0]) - 1 and self.maze[self.player_pos[1]][self.player_pos[0] + 1] == ".":
                     self.player_pos[0] += 1
         
         return self.player_pos[0] == self.end[0] and self.player_pos[1] == self.end[1]
@@ -158,6 +158,7 @@ while True:
                 maze = response['maze']
                 start = response['start']
                 end = response['end']
+                name = menu.name
                 playing = Playing(maze, start, end)
             else:
                 print("unknown type", response)
@@ -169,6 +170,15 @@ while True:
             print("won")
             # exit
             pygame.quit()
+        
+        response = client.sendPosition(playing.player_pos, name)
+        if response["type"] == helper.ALL_POSITIONS:
+            all_locations = response["locations"]
+            print(all_locations)
+        else:
+            print("unknown return")
+            sys.exit(1)
+
         playing.draw(screen)    
     elif state == FINISH_STATE:
         pass
