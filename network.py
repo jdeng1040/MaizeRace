@@ -46,7 +46,7 @@ class Client:
         data = helper.toJSON({
             "type": helper.POSITION,
             "position": currentPosition,
-            "name": name
+            "name": name,
             "position": currentPosition,
         })
 

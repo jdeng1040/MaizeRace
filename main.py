@@ -16,6 +16,7 @@ font = pygame.font.Font(None, 36)
 players = []
 
 client = None
+name = "oliver"
 
 class Menu:
     # Page identifiers
@@ -29,18 +30,19 @@ class Menu:
         self.input_rect2 = pygame.Rect(width // 4, height // 2 - 10, width // 2, 40)
         self.button_rect = pygame.Rect(width // 4, height * 3 // 4, width // 2, 40)
 
-        self.name = ""
-        self.ip = ""
+        self.ip = "127.0.0.1"
         self.current_page = Menu.PAGE_MAIN
     
     def handleEvent(self):
+        global name
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if self.input_rect1.collidepoint(pygame.mouse.get_pos()):
+                    global name
                     if event.key == pygame.K_BACKSPACE:
-                        self.name = self.name[:-1]
+                        name = name[:-1]
                     else:
-                        self.name += event.unicode
+                        name += event.unicode
                 elif self.input_rect2.collidepoint(pygame.mouse.get_pos()):
                     if event.key == pygame.K_BACKSPACE:
                         self.ip = self.ip[:-1]
@@ -48,22 +50,23 @@ class Menu:
                         self.ip += event.unicode
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1 and self.button_rect.collidepoint(pygame.mouse.get_pos()):
-                    print(f"Transitioning to another page with inputs: {self.name}, {self.ip}")
+                    print(f"Transitioning to another page with inputs: {name}, {self.ip}")
 
                     # Button clicked, transition to another page
                     if self.current_page == Menu.PAGE_MAIN:
                         global client
-                        client = network.Client(self.ip, self.name)
+                        client = network.Client(self.ip, name)
                         self.current_page = Menu.PAGE_RESULT
     
     def draw(self, screen):
+        global name
         screen.fill(white)
         if self.current_page == Menu.PAGE_MAIN:
             label1_text = font.render("Enter your name:", True, black)
             screen.blit(label1_text, (self.label1_rect.x + 5, self.label1_rect.y + 5))
 
             pygame.draw.rect(screen, black, self.input_rect1, 2)
-            text_surface = font.render(self.name, True, black)
+            text_surface = font.render(name, True, black)
             screen.blit(text_surface, (self.input_rect1.x + 5, self.input_rect1.y + 5))
 
             label2_text = font.render("Enter server IP:", True, black)
@@ -96,6 +99,7 @@ class Playing:
         self.player_pos[1] += 1
         self.end[0] += 1
         self.end[1] += 1
+        self.locations = {}
 
         self.maze = [['#' for _ in range(self.width+2)] for _ in range(self.height+2)]
         for row in range(len(maze)):
@@ -123,6 +127,7 @@ class Playing:
         return self.player_pos[0] == self.end[0] and self.player_pos[1] == self.end[1]
     
     def draw(self, screen):
+        global name
         screen.fill(white)
         for row in range(len(self.maze)):
             for col in range(len(self.maze[0])):
@@ -134,6 +139,16 @@ class Playing:
         
         # Draw the player
         pygame.draw.rect(screen, red, (self.player_pos[0] * self.player_size, self.player_pos[1] * self.player_size, self.player_size, self.player_size))
+
+        # Draw the other players
+        # players is just a list of names of players
+        for player in players:
+            if player != name:
+                ppos = self.locations[player]
+                pygame.draw.rect(screen, red, (ppos[0] * self.player_size, ppos[1] * self.player_size, self.player_size, self.player_size))
+
+    def update_locations(self, all_locations):
+        self.locations = all_locations
 
 # States
 MENU_STATE = "menu"
@@ -158,7 +173,7 @@ while True:
                 maze = response['maze']
                 start = response['start']
                 end = response['end']
-                name = menu.name
+                players = response['players']
                 playing = Playing(maze, start, end)
             else:
                 print("unknown type", response)
@@ -174,7 +189,9 @@ while True:
         response = client.sendPosition(playing.player_pos, name)
         if response["type"] == helper.ALL_POSITIONS:
             all_locations = response["locations"]
-            print(all_locations)
+            print("ALL LOCATIONS:\n-----------", all_locations)
+            print("PLAYERS :\n-----------", players)
+            playing.update_locations(all_locations)
         else:
             print("unknown return")
             sys.exit(1)
