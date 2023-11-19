@@ -100,7 +100,7 @@ class Playing:
         self.maze = [['#' for _ in range(self.width+2)] for _ in range(self.height+2)]
         for row in range(len(maze)):
             for col in range(len(maze[0])):
-                maze[row+1][col+1] = maze[row][col]
+                self.maze[row+1][col+1] = maze[row][col]
         
         self.player_size = 40
         self.player_speed = 1
@@ -126,11 +126,11 @@ class Playing:
         screen.fill(white)
         for row in range(len(self.maze)):
             for col in range(len(self.maze[0])):
-                if col == self.end_pos[0] and row == self.end_pos[1]:
+                if col == self.end[0] and row == self.end[1]:
                     pygame.draw.rect(screen, red, (col * self.player_size, row * self.player_size, self.player_size, self.player_size))
-                elif maze[row][col] == "#":
+                elif self.maze[row][col] == "#":
                     pygame.draw.rect(screen, black, (col * self.player_size, row * self.player_size, self.player_size, self.player_size))
-        self.maze[self.end_pos[1]][self.end_pos[0]] = "."
+        self.maze[self.end[1]][self.end[0]] = "."
         
         # Draw the player
         pygame.draw.rect(screen, red, (self.player_pos[0] * self.player_size, self.player_pos[1] * self.player_size, self.player_size, self.player_size))
@@ -158,7 +158,7 @@ while True:
                 maze = response['maze']
                 start = response['start']
                 end = response['end']
-                player = Playing(maze, start, end)
+                playing = Playing(maze, start, end)
             else:
                 print("unknown type", response)
                 sys.exit(1)
