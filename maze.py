@@ -1,7 +1,9 @@
 import random
 from collections import deque
 
-def generate_maze(width, height):
+random.seed(100)
+
+def _generate_maze(width, height):
     # Initialize the maze with walls
     maze = [['#' for _ in range(width)] for _ in range(height)]
 
@@ -27,6 +29,15 @@ def generate_maze(width, height):
     return maze, (start_x, start_y), (end_x, end_y)
 
 
+def generate_maze(width, height):
+    while True:
+        maze, start, end = _generate_maze(width, height)
+        solution = solve_maze(maze, start, end)
+        if solution is not None:
+            print_maze(maze, solution)
+            return maze, start, end, solution
+
+
 def print_maze(maze, solution):
     for r, row in enumerate(maze):
         print(' '.join(['+' if (r, c) in solution else cell for c, cell in enumerate(row)]))
@@ -40,7 +51,7 @@ def solve_maze(maze, start, end):
     def get_neighbors(position):
         row, col = position
         return [(row - 1, col), (row + 1, col), (row, col - 1), (row, col + 1)]
-    
+
     # Initialize the visited set to keep track of visited cells
     visited = set()
 
@@ -51,7 +62,7 @@ def solve_maze(maze, start, end):
         current_position, current_path = queue.popleft()
 
         if current_position == end:
-            return current_path + [end]
+            return current_path
 
         if current_position in visited:
             continue
@@ -70,7 +81,6 @@ SEPARATOR = "|"
 
 
 def serialize_maze(maze):
-    print(maze)
     output = []
     for row in maze:
         output.append("".join(row))
@@ -81,18 +91,3 @@ def deserialize_maze(maze_string):
     parts = maze_string.split(SEPARATOR)
     output = [list(s) for s in parts]
     return output
-
-
-if __name__ == "__main__":
-    width = 10
-    height = 10
-
-    while True:
-        maze, start, end = generate_maze(width, height)
-        solution = solve_maze(maze, start, end)
-        if solution is not None:
-            print_maze(maze, solution)
-            break
-
-    print(f"Start position: {start}")
-    print(f"End position: {end}")

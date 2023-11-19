@@ -11,12 +11,13 @@ pygame.display.set_caption("Input Menu")
 white = (255, 255, 255)
 black = (0, 0, 0)
 red = (255, 0, 0)
+gray = (211, 211, 211)
 font = pygame.font.Font(None, 36)
 
 players = []
 
 client = None
-name = ""
+name = "william"
 
 class Menu:
     # Page identifiers
@@ -30,7 +31,7 @@ class Menu:
         self.input_rect2 = pygame.Rect(width // 4, height // 2 - 10, width // 2, 40)
         self.button_rect = pygame.Rect(width // 4, height * 3 // 4, width // 2, 40)
 
-        self.ip = ""
+        self.ip = "127.0.0.1"
         self.current_page = Menu.PAGE_MAIN
     
     def handleEvent(self):
@@ -90,16 +91,14 @@ class Menu:
 
 
 class Playing:
-    def __init__(self, maze, start, end):
+    def __init__(self, maze, start, end, barrier_positions):
         self.width = len(maze[0])
         self.height = len(maze)
-        self.player_pos = start
-        self.end = end
-        self.player_pos[0] += 1
-        self.player_pos[1] += 1
-        self.end[0] += 1
-        self.end[1] += 1
+        self.player_pos = [start[1] + 1, start[0] + 1]
+        self.end = [end[1] + 1, end[0] + 1]
         self.locations = {}
+        self.barrier_positions = barrier_positions
+        print("barriers: ", self.barrier_positions)
 
         self.maze = [['#' for _ in range(self.width+2)] for _ in range(self.height+2)]
         for row in range(len(maze)):
@@ -135,6 +134,8 @@ class Playing:
                     pygame.draw.rect(screen, red, (col * self.player_size, row * self.player_size, self.player_size, self.player_size))
                 elif self.maze[row][col] == "#":
                     pygame.draw.rect(screen, black, (col * self.player_size, row * self.player_size, self.player_size, self.player_size))
+                elif [row-1, col-1] in self.barrier_positions:
+                    pygame.draw.rect(screen, gray, (col * self.player_size, row * self.player_size, self.player_size, self.player_size))
         self.maze[self.end[1]][self.end[0]] = "."
         
         # Draw the player
@@ -174,7 +175,7 @@ while True:
                 start = response['start']
                 end = response['end']
                 players = response['players']
-                playing = Playing(maze, start, end)
+                playing = Playing(maze, start, end, response['barriers'])
             else:
                 print("unknown type", response)
                 sys.exit(1)

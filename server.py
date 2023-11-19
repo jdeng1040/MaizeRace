@@ -24,7 +24,12 @@ class AllState:
         self.locations = {}
         self.maze_width = 25
         self.maze_height = 25
-        self.maze, self.start, self.end = maze.generate_maze(self.maze_width, self.maze_height)
+        self.maze, self.start, self.end, self.solution = maze.generate_maze(self.maze_width, self.maze_height)
+        self.maze[self.start[0]][self.start[1]] = '.'
+        self.barrier_positions = []
+        for i in range(9, len(self.solution), 10):
+            self.barrier_positions.append(self.solution[i])
+        print("barriers:", self.barrier_positions)
 
 
 # Create a socket to listen on
@@ -63,7 +68,6 @@ while True:
             continue
         else:
             data = json.loads(data)
-            print("data received", data)
 
             if data["type"] == helper.ENTER:
                 game_state.locations[data["name"]] = (0, 0)
@@ -75,7 +79,8 @@ while True:
                         "start": game_state.start,
                         "end": game_state.end,
                         "maze": serialized_maze,
-                        "players": list(game_state.locations.keys())
+                        "players": list(game_state.locations.keys()),
+                        "barriers": game_state.barrier_positions,
                     })
                     sock.sendall(d)
                 else:

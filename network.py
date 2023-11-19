@@ -33,6 +33,7 @@ class Client:
             return recv_data
         elif recv_data["type"] == "BEGIN":
             recv_data["maze"] = maze.deserialize_maze(recv_data["maze"])
+            maze.print_maze(recv_data["maze"], [])
         else:
             print("unknown type")
             sys.exit(1)
@@ -47,7 +48,6 @@ class Client:
             "type": helper.POSITION,
             "position": currentPosition,
             "name": name,
-            "position": currentPosition,
         })
 
         self.client.sendall(data)
