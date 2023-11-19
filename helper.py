@@ -1,6 +1,6 @@
 import json
 
-NUM_CLIENTS = 2
+NUM_CLIENTS = 3
 
 PACKET_SIZE = 1500
 # Client types sent

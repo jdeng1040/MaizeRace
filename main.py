@@ -16,7 +16,7 @@ from pygame.locals import (
 pygame.init()
 width, height = 640, 640
 screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("The Maize Game")
+pygame.display.set_caption("The Maize Race")
 
 white = (251,247,245)
 black = (0, 0, 0)
@@ -28,6 +28,9 @@ orange = (255, 165, 0)
 light_blue = (249,241,241)
 maize = (11, 11, 69)
 navy_blue = (11, 11, 69)
+wood = (194,131,66)
+silver = (197, 197, 197)
+gold = (219, 162, 63)
 
 stringToColor = {
     "white": white,
@@ -61,7 +64,7 @@ bigfont = pygame.font.Font(None, 46)
 players = []
 
 client = None
-name = "jj"
+name = ""
 start_time = None
 
 class Menu:
@@ -88,7 +91,7 @@ class Menu:
         self.color3 = pygame.Rect(start_x + 2 * (color_option_width + color_option_spacing), height // 2 + 50, color_option_width, 40)
         self.color4 = pygame.Rect(start_x + 3 * (color_option_width + color_option_spacing), height // 2 + 50, color_option_width, 40)
         self.button_rect = pygame.Rect(width // 4, height * 3 // 4, width // 2, 40)
-        self.ip = "127.0.0.1"
+        self.ip = ""
         self.selected_option = "RED"
         self.current_page = Menu.PAGE_MAIN
 
@@ -219,12 +222,19 @@ class Finish:
         screen.fill(light_blue)
         title_surface = font.render("You finished!", True, black)
         title_surface2 = font.render("Leaderboard", True, black)
-        screen.blit(title_surface, (width // 2 + 100, height // 12))
-        screen.blit(title_surface2, (width // 2 + 100, height // 4))
+        screen.blit(title_surface, (width // 2 + 75, height // 12))
+        screen.blit(title_surface2, (width // 2 + 75, height // 4))
         for i, item in enumerate(self.rankings):
             text_surface = font.render(str(i + 1) + ". " + item, True, black)
-            screen.blit(text_surface, (width // 2 + 100, height // 3 + i * 40))
-
+            if i == 0:
+                pygame.draw.rect(screen, gold, (250, 310, 100, 150))
+                screen.blit(text_surface, (width // 2 + 100, 270))
+            elif i == 1:
+                pygame.draw.rect(screen, silver, (350, 360, 100, 100))
+                screen.blit(text_surface, (370, 320))
+            elif i == 2:
+                pygame.draw.rect(screen, wood, (150, 380, 100, 80))
+                screen.blit(text_surface, (150, 340))
 
 class Playing:
     def __init__(self, maze, start, end, barrier_positions):
