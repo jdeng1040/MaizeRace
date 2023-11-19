@@ -25,7 +25,7 @@ class Client:
         print("sending: ", data)
         self.client.sendall(data)
 
-        recv_data = json.loads(self.client.recv(helper.PACKET_SIZE).decode())
+        recv_data = json.loads(self.client.recv(helper.PACKET_SIZE, socket.MSG_WAITALL).decode())
         print("Received: ", recv_data)
 
         if recv_data["type"] == "PLAYERS":
@@ -52,5 +52,5 @@ class Client:
 
         self.client.sendall(data)
 
-        recv_data = json.loads(self.client.recv(helper.PACKET_SIZE).decode())
+        recv_data = json.loads(self.client.recv(helper.PACKET_SIZE, socket.MSG_WAITALL).decode())
         return recv_data

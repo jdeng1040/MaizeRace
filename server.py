@@ -56,7 +56,7 @@ while True:
             connections.append(client)
             continue
 
-        data = str(sock.recv(1500).decode())
+        data = str(sock.recv(1500, socket.MSG_WAITALL).decode())
         if not data:
             connections.remove(sock)
             sock.close()
