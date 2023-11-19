@@ -171,7 +171,7 @@ while True:
             pygame.quit()
         
         response = client.sendPosition(playing.player_pos)
-        if response.type == helper.ALL_POSITIONS:
+        if response["type"] == helper.ALL_POSITIONS:
             all_locations = response["locations"]
             print(all_locations)
         else:
