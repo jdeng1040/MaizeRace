@@ -22,8 +22,8 @@ class AllState:
     def __init__(self):
         # format: { name: (xPos, yPos)}
         self.locations = {}
-        self.maze_width = 25
-        self.maze_height = 25
+        self.maze_width = 30
+        self.maze_height = 30
         self.maze, self.start, self.end, self.solution = maze.generate_maze(self.maze_width, self.maze_height)
         self.maze[self.start[0]][self.start[1]] = '.'
         self.barrier_positions = []
