@@ -451,13 +451,14 @@ while True:
             print(f"{name} Finished")
             state = FINISH_STATE
 
-        response = client.sendPosition(playing.player_pos, name)
-        if response["type"] == helper.ALL_POSITIONS:
-            all_locations = response["locations"]
-            playing.update_locations(all_locations, response["colors"])
-        else:
-            print("unknown return")
-            sys.exit(1)
+        if pygame.time.get_ticks() % 3 == 0 or len(playing.locations) != helper.NUM_CLIENTS:
+            response = client.sendPosition(playing.player_pos, name)
+            if response["type"] == helper.ALL_POSITIONS:
+                all_locations = response["locations"]
+                playing.update_locations(all_locations, response["colors"])
+            else:
+                print("unknown return")
+                sys.exit(1)
 
         if [playing.player_pos[1]-1, playing.player_pos[0]-1] in playing.barrier_positions:
             playing.barrier_positions.remove([playing.player_pos[1]-1, playing.player_pos[0]-1])
