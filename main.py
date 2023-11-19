@@ -158,6 +158,7 @@ while True:
                 maze = response['maze']
                 start = response['start']
                 end = response['end']
+                name = menu.name
                 playing = Playing(maze, start, end)
             else:
                 print("unknown type", response)
@@ -170,7 +171,7 @@ while True:
             # exit
             pygame.quit()
         
-        response = client.sendPosition(playing.player_pos)
+        response = client.sendPosition(playing.player_pos, name)
         if response["type"] == helper.ALL_POSITIONS:
             all_locations = response["locations"]
             print(all_locations)
