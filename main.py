@@ -102,7 +102,7 @@ class Playing:
             for col in range(len(maze[0])):
                 self.maze[row+1][col+1] = maze[row][col]
         
-        self.player_size = 40
+        self.player_size = 20
         self.player_speed = 1
     
     def handleEvent(self):
