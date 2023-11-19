@@ -4,6 +4,7 @@ import network
 import helper
 import random
 import time
+from datetime import datetime
 
 from pygame.locals import (
     RLEACCEL,
@@ -61,6 +62,7 @@ players = []
 
 client = None
 name = ""
+start_time = None
 
 class Menu:
     # Page identifiers
@@ -86,7 +88,7 @@ class Menu:
         self.color3 = pygame.Rect(start_x + 2 * (color_option_width + color_option_spacing), height // 2 + 50, color_option_width, 40)
         self.color4 = pygame.Rect(start_x + 3 * (color_option_width + color_option_spacing), height // 2 + 50, color_option_width, 40)
         self.button_rect = pygame.Rect(width // 4, height * 3 // 4, width // 2, 40)
-        self.ip = ""
+        self.ip = "127.0.0.1"
         self.selected_option = "RED"
         self.current_page = Menu.PAGE_MAIN
 
@@ -185,6 +187,16 @@ class Menu:
             for i, item in enumerate(players):
                 text_surface = font.render(str(i + 1) + ". " + item, True, black)
                 screen.blit(text_surface, (width // 2 - text_surface.get_width() // 2, height // 4 + i * 40))
+            global start_time
+            if start_time is not None:
+                seconds_left = int((start_time-datetime.now()).total_seconds())
+                print(seconds_left)
+                text = font.render(f"Start in {seconds_left} second{'s' if seconds_left > 1 else ''}", True, black)
+                i = len(players)
+                screen.blit(text, (width // 2 - text.get_width() // 2, height // 4 + i * 40))
+                if seconds_left <= 0:
+                    return True
+        return False
 
 
 class Finish:
@@ -403,16 +415,17 @@ while True:
                 players = response['players']
             elif response['type'] == helper.BEGIN:
                 print("moving to play state")
-                state = PLAY_STATE
                 maze = response['maze']
                 start = response['start']
                 end = response['end']
                 players = response['players']
+                start_time = datetime.fromisoformat(response['start_time'])
                 playing = Playing(maze, start, end, response['barriers'])
             else:
                 print("unknown type", response)
                 sys.exit(1)
-        menu.draw(screen)
+        if menu.draw(screen):
+            state = PLAY_STATE
     elif state == PLAY_STATE:
         if playing.handleEvent():
             print(f"{name} Finished")
