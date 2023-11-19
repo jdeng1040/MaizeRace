@@ -16,6 +16,16 @@ blue = (0, 0, 255)
 green = (0, 255, 0)
 orange = (255, 165, 0)
 
+stringToColor = {
+    "white": white,
+    "black": black,
+    "red": red,
+    "gray": gray,
+    "blue": blue,
+    "green": green,
+    "orange": orange,
+}
+
 font = pygame.font.Font(None, 36)
 
 players = []
@@ -152,6 +162,7 @@ class Playing:
         self.player_pos = [start[1] + 1, start[0] + 1]
         self.end = [end[1] + 1, end[0] + 1]
         self.locations = {}
+        self.colors = {}
         self.barrier_positions = barrier_positions
         print("barriers: ", self.barrier_positions)
 
@@ -194,17 +205,19 @@ class Playing:
         self.maze[self.end[1]][self.end[0]] = "."
         
         # Draw the player
-        pygame.draw.rect(screen, red, (self.player_pos[0] * self.player_size, self.player_pos[1] * self.player_size, self.player_size, self.player_size))
+        global client
+        pygame.draw.rect(screen, client.color, (self.player_pos[0] * self.player_size, self.player_pos[1] * self.player_size, self.player_size, self.player_size))
 
         # Draw the other players
         # players is just a list of names of players
         for player in players:
             if player != name:
                 ppos = self.locations[player]
-                pygame.draw.rect(screen, red, (ppos[0] * self.player_size, ppos[1] * self.player_size, self.player_size, self.player_size))
+                pygame.draw.rect(screen, stringToColor[self.colors[player]], (ppos[0] * self.player_size, ppos[1] * self.player_size, self.player_size, self.player_size))
 
-    def update_locations(self, all_locations):
+    def update_locations(self, all_locations, all_colors):
         self.locations = all_locations
+        self.colors = all_colors
 
 # States
 MENU_STATE = "menu"
@@ -247,7 +260,7 @@ while True:
             all_locations = response["locations"]
             print("ALL LOCATIONS:\n-----------", all_locations)
             print("PLAYERS :\n-----------", players)
-            playing.update_locations(all_locations)
+            playing.update_locations(all_locations, response["colors"])
         else:
             print("unknown return")
             sys.exit(1)

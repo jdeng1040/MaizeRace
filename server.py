@@ -27,6 +27,7 @@ class AllState:
         self.maze, self.start, self.end, self.solution = maze.generate_maze(self.maze_width, self.maze_height)
         self.maze[self.start[0]][self.start[1]] = '.'
         self.barrier_positions = []
+        self.colors = {}
         for i in range(9, len(self.solution), 10):
             self.barrier_positions.append(self.solution[i])
         print("barriers:", self.barrier_positions)
@@ -71,6 +72,7 @@ while True:
 
             if data["type"] == helper.ENTER:
                 game_state.locations[data["name"]] = (0, 0)
+                game_state.colors[data["name"]] = data["color"]
                 if len(game_state.locations) == num_clients or debug_mode:
                     # everyone entered the game, we can return the maze board
                     serialized_maze = maze.serialize_maze(game_state.maze)
@@ -96,7 +98,7 @@ while True:
                 d = helper.toJSON({
                     "type": helper.ALL_POSITIONS,
                     "locations": game_state.locations,
-                    "color": 
+                    "colors": game_state.colors,
                 })
                 sock.sendall(d)
             else:
