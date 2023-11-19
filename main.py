@@ -61,7 +61,7 @@ bigfont = pygame.font.Font(None, 46)
 players = []
 
 client = None
-name = ""
+name = "jj"
 start_time = None
 
 class Menu:
@@ -330,7 +330,7 @@ class Quiz:
         self.font_input = pygame.font.Font(None, 36)
         self.current_page = Quiz.PAGE_MAIN
         self.first_num = random.randint(0, 12)
-        self.second_num = random.randint(self.first_num, 12)
+        self.second_num = random.randint(0, self.first_num)
         self.operator = random.choice([" + ", " - ", " * "])
         self.question = str(self.first_num) + self.operator + str(self.second_num) + " = ?"
 
