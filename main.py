@@ -5,13 +5,6 @@ import helper
 import random
 import time
 
-from pygame.locals import (
-    K_ESCAPE,
-    KEYDOWN,
-    QUIT,
-)
-
-
 pygame.init()
 width, height = 800, 600
 screen = pygame.display.set_mode((width, height))
@@ -40,7 +33,7 @@ font = pygame.font.Font(None, 36)
 players = []
 
 client = None
-name = ""
+name = "Jason"
 
 class Menu:
     # Page identifiers
@@ -350,8 +343,6 @@ state = MENU_STATE
 
 menu = Menu()
 playing = None
-finish = Finish()
-quiz = None
 
 while True:
     if state == MENU_STATE:
