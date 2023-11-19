@@ -3,6 +3,13 @@ import sys
 import network
 import helper
 
+from pygame.locals import (
+    K_ESCAPE,
+    KEYDOWN,
+    QUIT,
+)
+
+
 pygame.init()
 width, height = 800, 600
 screen = pygame.display.set_mode((width, height))
@@ -31,7 +38,7 @@ font = pygame.font.Font(None, 36)
 players = []
 
 client = None
-name = ""
+name = "oli"
 
 class Menu:
     # Page identifiers
@@ -57,7 +64,7 @@ class Menu:
         self.color3 = pygame.Rect(start_x + 2 * (color_option_width + color_option_spacing), height // 2 + 50, color_option_width, 40)
         self.color4 = pygame.Rect(start_x + 3 * (color_option_width + color_option_spacing), height // 2 + 50, color_option_width, 40)
         self.button_rect = pygame.Rect(width // 4, height * 3 // 4, width // 2, 40)
-        self.ip = ""
+        self.ip = "127.0.0.1"
         self.selected_option = "RED"
         self.current_page = Menu.PAGE_MAIN
 
@@ -155,6 +162,33 @@ class Menu:
                 screen.blit(text_surface, (width // 2 - text_surface.get_width() // 2, height // 4 + i * 40))
 
 
+class Finish:
+    def __init__(self):
+        self.rankings = []
+    
+    def handleEvent(self):
+        # allow users to close the game
+        for event in pygame.event.get():
+            if event.type == KEYDOWN:
+                # Was it the Escape key? If so, stop the loop.
+                if event.key == K_ESCAPE:
+                    pygame.quit()
+
+            # Did the user click the window close button? If so, stop the loop.
+            elif event.type == QUIT:
+                pygame.quit()
+
+    def draw(self, screen):
+        screen.fill(white)
+        title_surface = font.render("You finished!", True, black)
+        title_surface2 = font.render("Leaderboard", True, black)
+        screen.blit(title_surface, (width // 2 - title_surface.get_width() // 2, height // 16))
+        screen.blit(title_surface2, (width // 2 - title_surface.get_width() // 2, height // 8))
+        for i, item in enumerate(self.rankings):
+            text_surface = font.render(str(i + 1) + ". " + item, True, black)
+            screen.blit(text_surface, (width // 2 - text_surface.get_width() // 2, height // 4 + i * 40))
+
+
 class Playing:
     def __init__(self, maze, start, end, barrier_positions):
         self.width = len(maze[0])
@@ -227,6 +261,7 @@ state = MENU_STATE
 
 menu = Menu()
 playing = None
+finish = Finish()
 
 while True:
     if state == MENU_STATE:
@@ -250,16 +285,12 @@ while True:
         menu.draw(screen)
     elif state == PLAY_STATE:
         if playing.handleEvent():
-            # won,
-            print("won")
-            # exit
-            pygame.quit()
-        
+            print(f"{name} Finished")
+            state = FINISH_STATE
+
         response = client.sendPosition(playing.player_pos, name)
         if response["type"] == helper.ALL_POSITIONS:
             all_locations = response["locations"]
-            print("ALL LOCATIONS:\n-----------", all_locations)
-            print("PLAYERS :\n-----------", players)
             playing.update_locations(all_locations, response["colors"])
         else:
             print("unknown return")
@@ -267,7 +298,19 @@ while True:
 
         playing.draw(screen)    
     elif state == FINISH_STATE:
-        pass
+        # send message to server
+        response = client.sendFinish(name)
+
+        if response["type"] == helper.FINISH:
+            finish.rankings = response["rankings"]
+        else:
+            print("unknown return")
+            sys.exit(1)
+
+        # render the ranking screen
+        finish.handleEvent()
+        finish.draw(screen)
+
     else:
         print("unknown state")
         sys.exit(1)

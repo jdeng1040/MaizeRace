@@ -48,6 +48,8 @@ print("Waiting for connections...Server Started")
 
 # Initialize
 game_state = AllState()
+num_finished = 0
+finished = []
 
 # Start the game logic (No longer accept any new connections)
 connections = [listen_socket]
@@ -69,6 +71,7 @@ while True:
             continue
         else:
             data = json.loads(data)
+            # print("data received", data)
 
             if data["type"] == helper.ENTER:
                 game_state.locations[data["name"]] = (0, 0)
@@ -95,12 +98,24 @@ while True:
                 name = data["name"]
                 position = data["position"]
                 game_state.locations[name] = position
+                
                 d = helper.toJSON({
                     "type": helper.ALL_POSITIONS,
                     "locations": game_state.locations,
                     "colors": game_state.colors,
                 })
                 sock.sendall(d)
+            elif data['type'] == helper.FINISH:
+                name = data["name"]
+                if name not in finished:
+                    finished.append(name)
+
+                f = helper.toJSON({
+                        "type": helper.FINISH,
+                        "rankings": finished
+                    })
+                sock.sendall(f)
+
             else:
                 print("unhandled TYPE")
                 sys.exit(1)

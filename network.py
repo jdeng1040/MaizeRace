@@ -24,11 +24,11 @@ class Client:
             "name": self.name,
             "color": self.color,
         })
-        print("sending: ", data)
+        # print("sending: ", data)
         self.client.sendall(data)
 
         recv_data = json.loads(self.client.recv(helper.PACKET_SIZE, socket.MSG_WAITALL).decode())
-        print("Received: ", recv_data)
+        # print("Received: ", recv_data)
 
         if recv_data["type"] == "PLAYERS":
             # do nothing
@@ -49,6 +49,20 @@ class Client:
         data = helper.toJSON({
             "type": helper.POSITION,
             "position": currentPosition,
+            "name": name,
+        })
+
+        self.client.sendall(data)
+
+        recv_data = json.loads(self.client.recv(helper.PACKET_SIZE, socket.MSG_WAITALL).decode())
+        return recv_data
+    
+    def sendFinish(self, name):
+        """
+        Send our current position and receive response (everyone's position or game ended)
+        """
+        data = helper.toJSON({
+            "type": helper.FINISH,
             "name": name,
         })
 
