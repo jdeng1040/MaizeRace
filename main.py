@@ -39,7 +39,7 @@ font = pygame.font.Font(None, 36)
 players = []
 
 client = None
-name = "Jason"
+name = ""
 
 class Menu:
     # Page identifiers
@@ -65,7 +65,7 @@ class Menu:
         self.color3 = pygame.Rect(start_x + 2 * (color_option_width + color_option_spacing), height // 2 + 50, color_option_width, 40)
         self.color4 = pygame.Rect(start_x + 3 * (color_option_width + color_option_spacing), height // 2 + 50, color_option_width, 40)
         self.button_rect = pygame.Rect(width // 4, height * 3 // 4, width // 2, 40)
-        self.ip = "127.0.0.1"
+        self.ip = ""
         self.selected_option = "RED"
         self.current_page = Menu.PAGE_MAIN
 
