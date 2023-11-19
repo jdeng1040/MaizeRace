@@ -1,6 +1,6 @@
 # The Maize Game
 
-![Video demo](https://youtu.be/HBnxMT5HPzo)
+[Video demo](https://youtu.be/HBnxMT5HPzo)
 
 ## Running the game
 1. git clone this repo and `cd` into it
