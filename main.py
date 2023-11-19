@@ -4,6 +4,7 @@ import network
 import helper
 import random
 import time
+from datetime import datetime
 
 from pygame.locals import (
     RLEACCEL,
@@ -60,7 +61,8 @@ bigfont = pygame.font.Font(None, 46)
 players = []
 
 client = None
-name = "Jason"
+name = ""
+start_time = None
 
 class Menu:
     # Page identifiers
@@ -185,6 +187,16 @@ class Menu:
             for i, item in enumerate(players):
                 text_surface = font.render(str(i + 1) + ". " + item, True, black)
                 screen.blit(text_surface, (width // 2 - text_surface.get_width() // 2, height // 4 + i * 40))
+            global start_time
+            if start_time is not None:
+                seconds_left = int((start_time-datetime.now()).total_seconds())
+                print(seconds_left)
+                text = font.render(f"Start in {seconds_left} second{'s' if seconds_left > 1 else ''}", True, black)
+                i = len(players)
+                screen.blit(text, (width // 2 - text.get_width() // 2, height // 4 + i * 40))
+                if seconds_left <= 0:
+                    return True
+        return False
 
 
 class Finish:
@@ -410,16 +422,17 @@ while True:
                 players = response['players']
             elif response['type'] == helper.BEGIN:
                 print("moving to play state")
-                state = PLAY_STATE
                 maze = response['maze']
                 start = response['start']
                 end = response['end']
                 players = response['players']
+                start_time = datetime.fromisoformat(response['start_time'])
                 playing = Playing(maze, start, end, response['barriers'])
             else:
                 print("unknown type", response)
                 sys.exit(1)
-        menu.draw(screen)
+        if menu.draw(screen):
+            state = PLAY_STATE
     elif state == PLAY_STATE:
         if playing.handleEvent():
             print(f"{name} Finished")

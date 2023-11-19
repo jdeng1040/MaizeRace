@@ -1,5 +1,7 @@
 import json
 
+NUM_CLIENTS = 2
+
 PACKET_SIZE = 1500
 # Client types sent
 ENTER = "ENTER"

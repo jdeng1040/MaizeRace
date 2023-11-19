@@ -1,10 +1,10 @@
 import socket
 import select
-from _thread import *
 import sys
 import json
 import helper
 import maze
+from datetime import datetime, timedelta
 
 if len(sys.argv) < 2:
     print("need to give server ip")
@@ -42,14 +42,14 @@ except socket.error as e:
     sys.exit(1)
 
 # Only accept 2 connections
-num_clients = 2
-listen_socket.listen(num_clients)
+listen_socket.listen(helper.NUM_CLIENTS)
 print("Waiting for connections...Server Started")
 
 # Initialize
 game_state = AllState()
 num_finished = 0
 finished = []
+start_time = None
 
 # Start the game logic (No longer accept any new connections)
 connections = [listen_socket]
@@ -76,9 +76,13 @@ while True:
             if data["type"] == helper.ENTER:
                 game_state.locations[data["name"]] = (0, 0)
                 game_state.colors[data["name"]] = data["color"]
-                if len(game_state.locations) == num_clients or debug_mode:
+                if len(game_state.locations) == helper.NUM_CLIENTS or debug_mode:
                     # everyone entered the game, we can return the maze board
                     serialized_maze = maze.serialize_maze(game_state.maze)
+
+                    if start_time is None:
+                        start_time = datetime.now() + timedelta(seconds=4)
+
                     d = helper.toJSON({
                         "type": helper.BEGIN,
                         "start": game_state.start,
@@ -86,6 +90,7 @@ while True:
                         "maze": serialized_maze,
                         "players": list(game_state.locations.keys()),
                         "barriers": game_state.barrier_positions,
+                        "start_time": start_time.isoformat(),
                     })
                     sock.sendall(d)
                 else:
