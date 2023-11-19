@@ -8,13 +8,13 @@ class Client:
         self.server = ip
         self.port = 5555
         self.addr = (self.server, self.port)
+        self.client.connect(self.addr)
         self.name = name
     
     def sendConnect(self):
         """
         Tell the server we are connecting
         """
-        self.client.connect(self.addr)
         data = helper.toJSON({
             "type": "ENTER",
             "name": self.name
