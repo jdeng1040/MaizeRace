@@ -219,14 +219,41 @@ class Playing:
         self.locations = all_locations
         self.colors = all_colors
 
+
+class Quiz:
+    PAGE_MAIN = "main"
+    PAGE_FAIL = "fail"
+
+    input_color_inactive = pygame.Color('lightskyblue3')
+    input_color_active = pygame.Color('dodgerblue2')
+    input_color = input_color_inactive
+    input_text = ''
+    input_active = False
+
+    def __init__(self):
+        self.font_title = pygame.font.Font(None, 48)
+        self.font_input = pygame.font.Font(None, 36)
+        self.current_page = Quiz.PAGE_MAIN
+        self.input_rect = pygame.Rect(width // 4, height // 2, width // 2, 40)
+
+    def handleEvent(self):
+        pass
+
+
+    def draw(self, screen):
+        pass
+
+
 # States
 MENU_STATE = "menu"
 PLAY_STATE = "play"
 FINISH_STATE = "finish"
+QUIZ_STATE = "quiz"
 state = MENU_STATE
 
 menu = Menu()
 playing = None
+quiz = None
 
 while True:
     if state == MENU_STATE:
@@ -265,7 +292,16 @@ while True:
             print("unknown return")
             sys.exit(1)
 
-        playing.draw(screen)    
+        if [playing.player_pos[0]-1, playing.player_pos[1]-1] in playing.barrier_positions:
+            state = QUIZ_STATE
+            quiz = Quiz()
+
+        playing.draw(screen)
+    elif state == QUIZ_STATE:
+        if quiz.handleEvent():
+            state = PLAY_STATE
+        quiz.draw(screen)
+
     elif state == FINISH_STATE:
         pass
     else:
