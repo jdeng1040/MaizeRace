@@ -26,9 +26,6 @@ stringToColor = {
     "orange": orange,
 }
 
-for k in stringToColor.keys():
-    stringToColor[k.upper()] = stringToColor[k]
-
 font = pygame.font.Font(None, 36)
 
 players = []
@@ -216,7 +213,7 @@ class Playing:
         for player in players:
             if player != name:
                 ppos = self.locations[player]
-                pygame.draw.rect(screen, stringToColor[self.colors[player]], (ppos[0] * self.player_size, ppos[1] * self.player_size, self.player_size, self.player_size))
+                pygame.draw.rect(screen, stringToColor[self.colors[player].upper()], (ppos[0] * self.player_size, ppos[1] * self.player_size, self.player_size, self.player_size))
 
     def update_locations(self, all_locations, all_colors):
         self.locations = all_locations
