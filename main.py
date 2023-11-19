@@ -53,7 +53,7 @@ class Menu:
                     # Button clicked, transition to another page
                     if self.current_page == Menu.PAGE_MAIN:
                         global client
-                        client = network.Client(self.name, self.ip)
+                        client = network.Client(self.ip, self.name)
                         self.current_page = Menu.PAGE_RESULT
     
     def draw(self, screen):
