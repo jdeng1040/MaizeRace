@@ -245,7 +245,6 @@ class Playing:
         self.locations = {}
         self.colors = {}
         self.barrier_positions = barrier_positions
-        print("barriers: ", self.barrier_positions)
 
         self.wall_img = pygame.image.load("bricks.png").convert()
         self.wall_img.set_colorkey((0, 0, 0), RLEACCEL)

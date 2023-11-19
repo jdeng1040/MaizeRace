@@ -30,7 +30,6 @@ class AllState:
         self.colors = {}
         for i in range(30, len(self.solution), 30):
             self.barrier_positions.append(self.solution[i])
-        print("barriers:", self.barrier_positions)
 
 
 # Create a socket to listen on

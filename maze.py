@@ -32,7 +32,6 @@ def generate_maze(width, height):
         maze, start, end = _generate_maze(width, height)
         solution = solve_maze(maze, start, end)
         if solution is not None:
-            print_maze(maze, solution)
             return maze, start, end, solution
 
 
