@@ -6,23 +6,27 @@ import random
 import time
 
 from pygame.locals import (
+    RLEACCEL,
     K_ESCAPE,
     KEYDOWN,
     QUIT,
 )
 
 pygame.init()
-width, height = 800, 600
+width, height = 700, 600
 screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Input Menu")
+pygame.display.set_caption("The Maize Game")
 
-white = (255, 255, 255)
+white = (251,247,245)
 black = (0, 0, 0)
 red = (255, 0, 0)
 gray = (211, 211, 211)
 blue = (0, 0, 255)
 green = (0, 255, 0)
 orange = (255, 165, 0)
+light_blue = (249,241,241)
+maize = (11, 11, 69)
+navy_blue = (11, 11, 69)
 
 stringToColor = {
     "white": white,
@@ -34,7 +38,24 @@ stringToColor = {
     "orange": orange,
 }
 
+red_img = pygame.image.load("red.png").convert()
+blue_img = pygame.image.load("blue.png").convert()
+green_img = pygame.image.load("green.png").convert()
+orange_img = pygame.image.load("orange.png").convert()
+red_img.set_colorkey((0, 0, 0), RLEACCEL)
+blue_img.set_colorkey((0, 0, 0), RLEACCEL)
+green_img.set_colorkey((0, 0, 0), RLEACCEL)
+orange_img.set_colorkey((0, 0, 0), RLEACCEL)
+
+stringToImage = {
+    "red": red_img,
+    "blue": blue_img,
+    "green": green_img,
+    "orange": orange_img
+}
+
 font = pygame.font.Font(None, 36)
+bigfont = pygame.font.Font(None, 46)
 
 players = []
 
@@ -47,7 +68,7 @@ class Menu:
     PAGE_RESULT = "result"
 
     def __init__(self):
-        color_option_width = 200
+        color_option_width = 150
         color_option_spacing = 10
 
         # Calculate the total width of the color options row
@@ -70,7 +91,6 @@ class Menu:
         self.current_page = Menu.PAGE_MAIN
 
     def handleEvent(self):
-       
         global name
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -101,10 +121,14 @@ class Menu:
                     self.selected_option = "GREEN"
                 elif self.color4.collidepoint(pygame.mouse.get_pos()):
                     self.selected_option = "ORANGE"
+
     def draw(self, screen):
         global name
-        screen.fill(white)
+        screen.fill(light_blue)
         if self.current_page == Menu.PAGE_MAIN:
+            title_text = bigfont.render("Welcome to The Maize Game!", True, maize)
+            screen.blit(title_text, (self.label1_rect.x - 50, self.label1_rect.y - 50))
+
             label1_text = font.render("Enter your name:", True, black)
             screen.blit(label1_text, (self.label1_rect.x + 5, self.label1_rect.y + 5))
 
@@ -112,15 +136,15 @@ class Menu:
             text_surface = font.render(name, True, black)
             screen.blit(text_surface, (self.input_rect1.x + 5, self.input_rect1.y + 5))
 
-            label2_text = font.render("Enter server IP:", True, black)
+            label2_text = font.render("Enter server IPv4 address:", True, black)
             screen.blit(label2_text, (self.label2_rect.x + 5, self.label2_rect.y + 5))
 
             pygame.draw.rect(screen, black, self.input_rect2, 2)
             text_surface = font.render(self.ip, True, black)
             screen.blit(text_surface, (self.input_rect2.x + 5, self.input_rect2.y + 5))
 
-            text_surface = font.render("Choose your color", True, black)
-            screen.blit(text_surface, (width // 4 + 80, height // 2))
+            text_surface = font.render("Choose your character color", True, black)
+            screen.blit(text_surface, (width // 4 + 20, height // 2))
 
             if self.selected_option == "RED":
                 text_surface = font.render("RED", True, red)
@@ -180,14 +204,14 @@ class Finish:
                 pygame.quit()
 
     def draw(self, screen):
-        screen.fill(white)
+        screen.fill(light_blue)
         title_surface = font.render("You finished!", True, black)
         title_surface2 = font.render("Leaderboard", True, black)
-        screen.blit(title_surface, (width // 2 - title_surface.get_width() // 2, height // 16))
-        screen.blit(title_surface2, (width // 2 - title_surface.get_width() // 2, height // 8))
+        screen.blit(title_surface, (width // 2 + 100, height // 12))
+        screen.blit(title_surface2, (width // 2 + 100, height // 4))
         for i, item in enumerate(self.rankings):
             text_surface = font.render(str(i + 1) + ". " + item, True, black)
-            screen.blit(text_surface, (width // 2 - text_surface.get_width() // 2, height // 4 + i * 40))
+            screen.blit(text_surface, (width // 2 + 100, height // 3 + i * 40))
 
 
 class Playing:
@@ -200,6 +224,15 @@ class Playing:
         self.colors = {}
         self.barrier_positions = barrier_positions
         print("barriers: ", self.barrier_positions)
+
+        self.wall_img = pygame.image.load("bricks.png").convert()
+        self.wall_img.set_colorkey((0, 0, 0), RLEACCEL)
+        self.barrier_img = pygame.image.load("gemstone.png").convert()
+        self.barrier_img.set_colorkey((0, 0, 0), RLEACCEL)
+        self.end_img = pygame.image.load("star.png").convert()
+        self.end_img.set_colorkey((0, 0, 0), RLEACCEL)
+        self.player_img = stringToImage[client.color.lower()]
+        self.player_img.set_colorkey((0, 0, 0), RLEACCEL)
 
         self.maze = [['#' for _ in range(self.width+2)] for _ in range(self.height+2)]
         for row in range(len(maze)):
@@ -232,23 +265,29 @@ class Playing:
         for row in range(len(self.maze)):
             for col in range(len(self.maze[0])):
                 if col == self.end[0] and row == self.end[1]:
-                    pygame.draw.rect(screen, red, (col * self.player_size, row * self.player_size, self.player_size, self.player_size))
+                    #pygame.draw.rect(screen, red, (col * self.player_size, row * self.player_size, self.player_size, self.player_size))
+                    screen.blit(self.end_img, (col * self.player_size, row * self.player_size))
                 elif self.maze[row][col] == "#":
-                    pygame.draw.rect(screen, black, (col * self.player_size, row * self.player_size, self.player_size, self.player_size))
+                    #pygame.draw.rect(screen, black, (col * self.player_size, row * self.player_size, self.player_size, self.player_size))
+                    screen.blit(self.wall_img, (col * self.player_size, row * self.player_size))
                 elif [row-1, col-1] in self.barrier_positions:
-                    pygame.draw.rect(screen, gray, (col * self.player_size, row * self.player_size, self.player_size, self.player_size))
+                    #pygame.draw.rect(screen, gray, (col * self.player_size, row * self.player_size, self.player_size, self.player_size))
+                    screen.blit(self.barrier_img, (col * self.player_size, row * self.player_size))
+
         self.maze[self.end[1]][self.end[0]] = "."
         
         # Draw the player
         global client
-        pygame.draw.rect(screen, client.color, (self.player_pos[0] * self.player_size, self.player_pos[1] * self.player_size, self.player_size, self.player_size))
+        # pygame.draw.rect(screen, client.color, (self.player_pos[0] * self.player_size, self.player_pos[1] * self.player_size, self.player_size, self.player_size))
+        screen.blit(self.player_img, (self.player_pos[0] * self.player_size, self.player_pos[1]* self.player_size))
 
         # Draw the other players
         # players is just a list of names of players
         for player in players:
             if player != name:
                 ppos = self.locations[player]
-                pygame.draw.rect(screen, stringToColor[self.colors[player].lower()], (ppos[0] * self.player_size, ppos[1] * self.player_size, self.player_size, self.player_size))
+                #ygame.draw.rect(screen, stringToColor[self.colors[player].lower()], (ppos[0] * self.player_size, ppos[1] * self.player_size, self.player_size, self.player_size))
+                screen.blit(stringToImage[self.colors[player].lower()], (ppos[0] * self.player_size, ppos[1] * self.player_size))
 
     def update_locations(self, all_locations, all_colors):
         self.locations = all_locations
@@ -263,11 +302,11 @@ class Quiz:
     input_color_active = pygame.Color('dodgerblue2')
     input_color = input_color_inactive
     input_text = ''
-    input_active = False
+    input_active = True
 
     # Define button properties
     button_rect = pygame.Rect(width // 4, height // 2 + 60, width // 2, 40)
-    button_color = pygame.Color('green')
+    button_color = pygame.Color(navy_blue)
     button_text = 'Enter'
 
     input_rect = pygame.Rect(width // 4, height // 2, width // 2, 40)
@@ -278,15 +317,15 @@ class Quiz:
         self.current_page = Quiz.PAGE_MAIN
         self.first_num = random.randint(0, 12)
         self.second_num = random.randint(0, 12)
-        self.question = str(self.first_num) + " * " + str(self.second_num)
+        self.question = str(self.first_num) + " * " + str(self.second_num) + " = ?"
 
     def handleEvent(self):
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.input_rect.collidepoint(event.pos):
-                    self.input_active = not self.input_active
-                    self.input_color = self.input_color_active if self.input_active else self.input_color_inactive
-                elif self.button_rect.collidepoint(event.pos) and self.input_text and self.input_text.isdigit():
+                # if self.input_rect.collidepoint(event.pos):
+                #     self.input_active = not self.input_active
+                #     self.input_color = self.input_color_active if self.input_active else self.input_color_inactive
+                if self.button_rect.collidepoint(event.pos) and self.input_text and self.input_text.isdigit():
                     if int(self.input_text) == self.first_num * self.second_num:
                         return True
                     else:
@@ -332,6 +371,9 @@ class Quiz:
         elif self.current_page == self.PAGE_FAIL:
             for i in range(3, 0, -1):
                 screen.fill(white)
+                title_surface = font.render("Wrong answer! Try again in: ", True, black)
+                screen.blit(title_surface, (width // 2, height // 3))
+
                 text = self.font_input.render(str(i), True, black)
                 text_rect = text.get_rect(center=(width, height // 2))
                 screen.blit(text, text_rect)
