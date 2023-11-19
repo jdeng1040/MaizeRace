@@ -26,6 +26,9 @@ stringToColor = {
     "orange": orange,
 }
 
+for k in stringToColor.keys():
+    stringToColor[k.upper()] = stringToColor[k]
+
 font = pygame.font.Font(None, 36)
 
 players = []
