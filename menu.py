@@ -53,7 +53,7 @@ while running:
             if input_rect.collidepoint(event.pos):
                 input_active = not input_active
                 input_color = input_color_active if input_active else input_color_inactive
-            elif button_rect.collidepoint(event.pos):
+            elif button_rect.collidepoint(event.pos) and input_text and input_text.isdigit():
                 if int(input_text) == first_num * second_num:
                     print("GOOD")
                 else:
@@ -61,7 +61,7 @@ while running:
 
         elif event.type == pygame.KEYDOWN:
             if input_active:
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_RETURN and input_text and input_text.isdigit():
                     if int(input_text) == first_num * second_num:
                         print("GOOD")
                     else:

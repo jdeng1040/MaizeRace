@@ -2,6 +2,8 @@ import pygame
 import sys
 import network
 import helper
+import random
+import time
 
 pygame.init()
 width, height = 800, 600
@@ -31,7 +33,7 @@ font = pygame.font.Font(None, 36)
 players = []
 
 client = None
-name = ""
+name = "Jason"
 
 class Menu:
     # Page identifiers
@@ -57,7 +59,7 @@ class Menu:
         self.color3 = pygame.Rect(start_x + 2 * (color_option_width + color_option_spacing), height // 2 + 50, color_option_width, 40)
         self.color4 = pygame.Rect(start_x + 3 * (color_option_width + color_option_spacing), height // 2 + 50, color_option_width, 40)
         self.button_rect = pygame.Rect(width // 4, height * 3 // 4, width // 2, 40)
-        self.ip = ""
+        self.ip = "127.0.0.1"
         self.selected_option = "RED"
         self.current_page = Menu.PAGE_MAIN
 
@@ -230,6 +232,17 @@ class Quiz:
     input_text = ''
     input_active = False
 
+    # Define button properties
+    button_rect = pygame.Rect(width // 4, height // 2 + 60, width // 2, 40)
+    button_color = pygame.Color('green')
+    button_text = 'Enter'
+
+    # Define the question
+    # Generate a random integer between 1 and 10 (inclusive)
+    first_num = random.randint(0, 12)
+    second_num = random.randint(0, 12)
+    question = str(first_num) + " * " + str(second_num)
+
     def __init__(self):
         self.font_title = pygame.font.Font(None, 48)
         self.font_input = pygame.font.Font(None, 36)
@@ -237,11 +250,61 @@ class Quiz:
         self.input_rect = pygame.Rect(width // 4, height // 2, width // 2, 40)
 
     def handleEvent(self):
-        pass
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.input_rect.collidepoint(event.pos):
+                    self.input_active = not self.input_active
+                    self.input_color = self.input_color_active if self.input_active else self.input_color_inactive
+                elif self.button_rect.collidepoint(event.pos) and self.input_text and self.input_text.isdigit():
+                    if int(self.input_text) == self.first_num * self.second_num:
+                        return True
+                    else:
+                        self.current_page = self.PAGE_FAIL
 
+            elif event.type == pygame.KEYDOWN:
+                if self.input_active:
+                    if event.key == pygame.K_RETURN and self.input_text and self.input_text.isdigit():
+                        if int(self.input_text) == self.first_num * self.second_num:
+                            return True
+                        else:
+                            self.current_page = self.PAGE_FAIL
+                    elif event.key == pygame.K_BACKSPACE:
+                        self.input_text = self.input_text[:-1]
+                    else:
+                        self.input_text += event.unicode
+        return False
 
     def draw(self, screen):
-        pass
+        # Draw the page
+        screen.fill(white)
+        if current_page == self.PAGE_MAIN:
+            # Draw title
+            title_surface = self.font_title.render(self.question, True, black)
+            title_rect = title_surface.get_rect(center=(width, height // 4))
+            screen.blit(title_surface, title_rect)
+
+            # Draw input field
+            pygame.draw.rect(screen, self.input_color, self.input_rect, 2)
+            input_surface = self.font_input.render(self.input_text, True, black)
+            width = max(self.input_rect.w, input_surface.get_width()+10)
+            self.input_rect.w = width
+            screen.blit(input_surface, (self.input_rect.x+5, self.input_rect.y+5))
+
+            # Draw enter button
+            pygame.draw.rect(screen, self.button_color, self.button_rect)
+            button_surface = self.font_input.render(self.button_text, True, white)
+            self.button_rect_center = self.button_rect.center
+            self.button_rect_center = (self.button_rect_center[0] - button_surface.get_width() // 2, self.button_rect_center[1] - button_surface.get_height() // 2)
+            screen.blit(button_surface, self.button_rect_center)
+        elif current_page == self.PAGE_FAIL:
+            for i in range(5, 0, -1):
+                screen.fill(white)
+                text = self.font_input.render(str(i), True, black)
+                text_rect = text.get_rect(center=(width, height // 2))
+                screen.blit(text, text_rect)
+                pygame.display.flip()
+                time.sleep(1)
+            current_page = self.PAGE_MAIN
 
 
 # States
