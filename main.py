@@ -5,6 +5,12 @@ import helper
 import random
 import time
 
+from pygame.locals import (
+    K_ESCAPE,
+    KEYDOWN,
+    QUIT,
+)
+
 pygame.init()
 width, height = 800, 600
 screen = pygame.display.set_mode((width, height))
@@ -344,6 +350,7 @@ QUIZ_STATE = "quiz"
 state = MENU_STATE
 
 menu = Menu()
+finish = Finish()
 playing = None
 
 while True:
