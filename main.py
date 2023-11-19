@@ -304,7 +304,9 @@ class Quiz:
     def draw(self, screen):
         # Draw the page
         screen.fill(white)
-        if current_page == self.PAGE_MAIN:
+        global width
+        global height
+        if self.current_page == self.PAGE_MAIN:
             # Draw title
             title_surface = self.font_title.render(self.question, True, black)
             title_rect = title_surface.get_rect(center=(width, height // 4))
@@ -323,7 +325,7 @@ class Quiz:
             self.button_rect_center = self.button_rect.center
             self.button_rect_center = (self.button_rect_center[0] - button_surface.get_width() // 2, self.button_rect_center[1] - button_surface.get_height() // 2)
             screen.blit(button_surface, self.button_rect_center)
-        elif current_page == self.PAGE_FAIL:
+        elif self.current_page == self.PAGE_FAIL:
             for i in range(5, 0, -1):
                 screen.fill(white)
                 text = self.font_input.render(str(i), True, black)
@@ -331,7 +333,7 @@ class Quiz:
                 screen.blit(text, text_rect)
                 pygame.display.flip()
                 time.sleep(1)
-            current_page = self.PAGE_MAIN
+            self.current_page = self.PAGE_MAIN
 
 
 # States
@@ -377,7 +379,8 @@ while True:
             print("unknown return")
             sys.exit(1)
 
-        if [playing.player_pos[0]-1, playing.player_pos[1]-1] in playing.barrier_positions:
+        if [playing.player_pos[1]-1, playing.player_pos[0]-1] in playing.barrier_positions:
+            playing.barrier_positions.remove([playing.player_pos[1]-1, playing.player_pos[0]-1])
             state = QUIZ_STATE
             quiz = Quiz()
 
