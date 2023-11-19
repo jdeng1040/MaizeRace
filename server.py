@@ -84,6 +84,15 @@ while True:
                         "players": list(game_state.locations.keys())
                     })
                     sock.sendall(d)
+            elif data['type'] == helper.POSITION:
+                name = data["name"]
+                position = data["position"]
+                game_state.locations[name] = position
+                d = helper.toJSON({
+                    "type": helper.ALL_POSITIONS,
+                    "locations": game_state.locations
+                })
+                sock.sendall(d)
             else:
                 print("unhandled TYPE")
                 sys.exit(1)

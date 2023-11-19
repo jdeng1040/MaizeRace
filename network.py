@@ -43,4 +43,12 @@ class Client:
         """
         Send our current position and receive response (everyone's position or game ended)
         """
-        pass
+        data = helper.toJSON({
+            "type": helper.POSITION,
+            "position": currentPosition
+        })
+
+        self.client.sendall(data)
+
+        recv_data = json.loads(self.client.recv(helper.PACKET_SIZE).decode())
+        return recv_data

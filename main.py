@@ -169,6 +169,15 @@ while True:
             print("won")
             # exit
             pygame.quit()
+        
+        response = client.sendPosition(playing.player_pos)
+        if response.type == helper.ALL_POSITIONS:
+            all_locations = response["locations"]
+            print(all_locations)
+        else:
+            print("unknown return")
+            sys.exit(1)
+
         playing.draw(screen)    
     elif state == FINISH_STATE:
         pass
