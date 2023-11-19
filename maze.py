@@ -1,5 +1,5 @@
 import random
-
+from collections import deque
 
 def generate_maze(width, height):
     # Initialize the maze with walls
@@ -31,41 +31,39 @@ def print_maze(maze, solution):
     for r, row in enumerate(maze):
         print(' '.join(['+' if (r, c) in solution else cell for c, cell in enumerate(row)]))
 
-
 def solve_maze(maze, start, end):
-    height, width = len(maze), len(maze[0])
+    def is_valid_move(maze, position):
+        row, col = position
+        rows, cols = len(maze), len(maze[0])
+        return 0 <= row < rows and 0 <= col < cols and maze[row][col] == "."
 
-    def is_valid(x, y):
-        return 0 <= x < width and 0 <= y < height and maze[y][x] in {'S', 'E', '#', '.'}
-
-    DIRECTIONS = [
-        (1, 0),
-        (-1, 0),
-        (0, 1),
-        (0, -1),
-    ]
+    def get_neighbors(position):
+        row, col = position
+        return [(row - 1, col), (row + 1, col), (row, col - 1), (row, col + 1)]
+    
+    # Initialize the visited set to keep track of visited cells
     visited = set()
 
-    def dfs(x, y, path):
-        if not is_valid(x, y):
-            return None
+    # Use BFS to find the optimal path
+    queue = deque([(start, [])])  # Each element is a tuple (current_position, current_path)
 
-        if (y, x) == end:
-            return path
+    while queue:
+        current_position, current_path = queue.popleft()
 
-        if (maze[y][x] == '.' or maze[y][x] == 'S') and (x, y) not in visited:
-            visited.add((x, y))
-            for d in DIRECTIONS:
-                newY, newX = d[0] + y, d[1] + x
-                if is_valid(newX, newY):
-                    path.append((x, y))
-                    result = dfs(newX, newY, path)
-                    if result:
-                        return result
-                    path.pop()
-            return None
+        if current_position == end:
+            return current_path + [end]
 
-    return dfs(start[1], start[0], [start])
+        if current_position in visited:
+            continue
+
+        visited.add(current_position)
+
+        for neighbor in get_neighbors(current_position):
+            if is_valid_move(maze, neighbor):
+                queue.append((neighbor, current_path + [current_position]))
+
+    # If no path is found
+    return None
 
 
 SEPARATOR = "|"
