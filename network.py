@@ -39,13 +39,14 @@ class Client:
 
         return recv_data
 
-    def sendPosition(self, currentPosition):
+    def sendPosition(self, currentPosition, name):
         """
         Send our current position and receive response (everyone's position or game ended)
         """
         data = helper.toJSON({
             "type": helper.POSITION,
-            "position": currentPosition
+            "position": currentPosition,
+            "name": name
         })
 
         self.client.sendall(data)
